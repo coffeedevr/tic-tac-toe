@@ -1,0 +1,29 @@
+body {
+    display: flex;
+    flex-direction: column;
+    justify-self: center;
+    align-items: center;
+    text-align: center;
+}
+
+.board-container {
+    padding: 10px
+}
+
+.boardrow-one,
+.boardrow-two,
+.boardrow-three {
+    display: flex;
+}
+
+
+.cell {
+    height: 50px;
+    width: 50px;
+    padding: 10px;
+    border: 1px solid black
+}
+
+.hidden {
+    visibility: hidden;
+}
