@@ -8,34 +8,44 @@
     <title>Tic Tac Toe</title>
 
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tilt+Neon&family=Yatra+One&display=swap" rel="stylesheet">
+
 </head>
 
 <body>
     <div class="header">
-        <h1>Tic Tac Toe</h1>
+        <p class="header-text">Tic Tac Toe</p>
     </div>
-    <div class="board-container">
-        <p class="hidden">Current Turn:</p>
+    <div class="selection-container">
+        <p class="form-header-text">Player Selection</p>
+        <p class="form-text">* Remember, Player One will be the first move!</p>
+        <div class="form-wrapper">
+            <form action="" method="POST" class="form-container">
+                <div class="form-row one">
+                    <label for="player-one">Enter Player One's name:</label>
+                    <input text="textbox" id="player-one" name="player-one" required></input>
+                </div>
+                <div class="form-row two">
+                    <label for="player-two">Enter Player Two's name:</label>
+                    <input text="textbox" id="player-two" name="player-two" required></input>
+                </div>
+                <button type="button" id="startgame">Start</button>
+            </form>
+        </div>
+    </div>
+    <div class="board-container hidden">
+        <p class="hidden current-turn-text">Current Turn:</p>
         <p class="hidden" id="current-turn"></p>
-        <div class="boardrow-one">
-            <div class="cell" id="a1"></div>
-            <div class="cell" id="a2"></div>
-            <div class="cell" id="a3"></div>
+        <div class="board">
         </div>
-        <div class="boardrow-two">
-            <div class="cell" id="b4"></div>
-            <div class="cell" id="b5"></div>
-            <div class="cell" id="b6"></div>
-        </div>
-        <div class="boardrow-one">
-            <div class="cell" id="c7"></div>
-            <div class="cell" id="c8"></div>
-            <div class="cell" id="c9"></div>
-        </div>
-        <p id="announcement"></p>
+        <!-- <p class="hidden restart">Restart</p> -->
     </div>
     <div class="footer">
-        <p id="footertext"></p>
+        <p id="footertext"> coffeedevr |</p>
+        <a href="https://github.com/coffeedevr/admin-dashboard" target=”_blank”><img src="img/githublogo.png"
+            height="40px"></a>
     </div>
     <script src="script.js"></script>
 </body>

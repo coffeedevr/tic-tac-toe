@@ -1,12 +1,23 @@
 // node selectors
-const cellbtn = document.querySelectorAll('.cell')
 const currentTurnDisplay = document.querySelector('#current-turn')
-const announcement = document.querySelector('#announcement')
+const currentTurnText = document.querySelector('.current-turn-text')
 const updateVisibility = document.querySelectorAll('.hidden')
+const startGameBtn = document.querySelector('#startgame')
+const inputone = document.querySelector('#player-one')
+const inputtwo = document.querySelector('#player-two')
+const formcontainer = document.querySelector('.selection-container')
+const footertext = document.getElementById('footertext')
+
+let playerOneName = ''
+let playerTwoName = ''
+
+const date = new Date()
+const year = date.getFullYear()
+footertext.textContent = '© ' + year + footertext.textContent
 
 // gameboard module: tracks turn, board and validates pieces
 const gameBoard = (() => {
-  const turn = 1
+  const turn = 0
   const board = ['', '', '', '', '', '', '', '', '']
   const checkBoard = () => {
     // check rows
@@ -80,27 +91,49 @@ const gameBoard = (() => {
   const checkCombination = combination => {
     switch (combination) {
       case 'XXX':
-        return 'PlayerOne'
+        return 'playerOne'
       case 'OOO':
-        return 'PlayerTwo'
+        return 'playerTwo'
       default :
         return 'Nothing'
     }
   }
-  return { turn, board, checkBoard }
+
+  // function to dynamically create board and attach event listeners
+  const createBoard = () => {
+    const board = document.querySelector('.board')
+
+    for (let i = 1; i <= 9; i++) { // create grids
+      const box = document.createElement('div')
+      box.setAttribute('class', 'cell')
+      box.setAttribute('id', 'a' + i)
+      box.addEventListener('click', placePiece)
+      board.appendChild(box)
+    }
+  }
+  return { turn, board, checkBoard, createBoard }
 })()
 
 // display controller module: updates html elements
 const displayController = (() => {
   const showName = (name) => { currentTurnDisplay.textContent = name }
-  const displayWinner = (name) => { announcement.textContent = name }
+  const displayTie = () => {
+    currentTurnText.classList.toggle('strike')
+    currentTurnDisplay.textContent = 'It is a tie!'
+  }
+  const displayWinner = (name) => {
+    currentTurnText.classList.toggle('strike')
+    name === 'playerOne'
+      ? currentTurnDisplay.textContent = playerOneName + ' WINS!'
+      : currentTurnDisplay.textContent = playerTwoName + ' WINS!'
+  }
   const placePiece = (piece, event) => {
     const cell = parseInt(event.target.id.substring(1)) - 1
     gameBoard.board[cell] = piece
     document.getElementById(event.target.id).textContent = piece
     showName()
   }
-  return { showName, placePiece, displayWinner }
+  return { showName, placePiece, displayWinner, displayTie }
 })()
 
 // player object: name and piece to use
@@ -108,66 +141,78 @@ const Player = (name, piece) => {
   return { name, piece }
 }
 
-// function to tract turns
+// function to track turns
 function checkTurns (turns, name) {
   if (turns > 9) {
-    displayController.displayWinner(name)
+    displayController.displayTie()
     endGame()
   } else {
     const player = gameBoard.checkBoard()
     if (player !== 'Nothing') {
-      displayController.displayWinner(`${player}`)
+      displayController.displayWinner(player)
       endGame()
+      console.log('hi')
     }
   }
 }
 
 // function to initiate turn at game start
 function updateTurn () {
+  gameBoard.turn++
   gameBoard.turn % 2 === 0
     ? displayController.showName(playerTwo.name)
     : displayController.showName(playerOne.name)
 }
 
-// function to call placepiece controller, update gameboard and validate move
+// function to call place piece controller, update gameboard and validate move
 function placePiece (event) {
+  event.stopPropagation()
+
   if (document.getElementById(event.target.id).textContent.length === 0) {
     if (gameBoard.turn % 2 === 0) {
       displayController.placePiece(playerTwo.piece, event)
+      updateTurn()
       checkTurns(gameBoard.turn, playerTwo.name)
     } else {
       displayController.placePiece(playerOne.piece, event)
+      updateTurn()
       checkTurns(gameBoard.turn, playerOne.name)
     }
-    gameBoard.turn++
-    updateTurn()
   }
 }
 
-// function to start game by adding event listeners and starts the turn
+let playerOne = ''
+let playerTwo = ''
+
+startGameBtn.addEventListener('click', () => {
+  startGame()
+})
+
 function startGame () {
+  if (inputone.value === '' || inputtwo.value === '') { return }
+
+  playerOneName = inputone.value.toUpperCase()
+  playerTwoName = inputtwo.value.toUpperCase()
+
+  playerOne = Player(playerOneName, 'X')
+  playerTwo = Player(playerTwoName, 'O')
+
+  gameBoard.createBoard()
   updateTurn()
-  cellbtn.forEach((button) => {
-    button.addEventListener('click', placePiece)
-  })
   toggleElements()
 }
 
 function endGame () {
-  cellbtn.forEach((button) => {
+  const box = document.querySelectorAll('.cell')
+  box.forEach((button) => {
     button.removeEventListener('click', placePiece)
   })
-  toggleElements()
 }
 
 function toggleElements () {
   updateVisibility.forEach((element) => {
     element.classList.toggle('hidden')
   })
+  formcontainer.classList.toggle('hidden')
 }
-
 // instantiate player objects
-const playerOne = Player('Dan', 'X')
-const playerTwo = Player('Ledy', 'O')
-
-startGame()
